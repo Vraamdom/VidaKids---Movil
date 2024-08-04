@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
+import 'package:intl/intl.dart';
+import 'package:intl/date_symbol_data_local.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
@@ -19,7 +21,7 @@ class _EventosPageState extends State<EventosPage> {
   @override
   void initState() {
     super.initState();
-    _fetchEventos();
+    initializeDateFormatting('es_ES', null).then((_) => _fetchEventos());
   }
 
   Future<void> _fetchEventos() async {
@@ -97,13 +99,24 @@ class _EventosPageState extends State<EventosPage> {
     );
   }
 
+
+String _capitalize(String text) {
+  return text.split(' ').map((word) => word[0].toUpperCase() + word.substring(1)).join(' ');
+}
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Eventos'),
+        title: Text(
+          'Eventos',
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+        ),
+        backgroundColor: Colors.lightBlue,
+        centerTitle: true,
+        iconTheme: IconThemeData(color: Colors.white), // Color de la flecha de retroceso
       ),
       body: _isLoading
           ? Center(child: CircularProgressIndicator())
@@ -113,6 +126,7 @@ class _EventosPageState extends State<EventosPage> {
                   width: size.width,
                   height: size.height,
                   child: TableCalendar(
+                    locale: 'es_ES',
                     firstDay: DateTime.utc(2010, 10, 16),
                     lastDay: DateTime.utc(2030, 3, 14),
                     focusedDay: _focusedDay,
@@ -141,6 +155,34 @@ class _EventosPageState extends State<EventosPage> {
                     onPageChanged: (focusedDay) {
                       _focusedDay = focusedDay;
                     },
+                    calendarStyle: CalendarStyle(
+                      todayDecoration: BoxDecoration(
+                        color: Colors.lightBlue, // Color del círculo de hoy
+                        shape: BoxShape.circle,
+                      ),
+                      selectedDecoration: BoxDecoration(
+                        color: Color.fromARGB(255, 140, 212, 245), // Color del círculo seleccionado
+                        shape: BoxShape.circle,
+                      ),
+                      markerDecoration: BoxDecoration(
+                        color: Colors.lightBlue, // Color de los círculos de eventos
+                        shape: BoxShape.circle,
+                      ),
+                      markersMaxCount: 3, // Ajusta este valor según sea necesario
+                      outsideDaysVisible: false,
+                    ),
+                  daysOfWeekStyle: DaysOfWeekStyle(
+                    weekdayStyle: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+                    weekendStyle: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+                  ),
+                  headerStyle: HeaderStyle(
+                      titleTextFormatter: (date, locale) {
+                        String formattedDate = DateFormat('MMMM yyyy', locale).format(date);
+                        return _capitalize(formattedDate);
+                      },
+                      formatButtonVisible: false
+                    ),
+
                   ),
                 ),
     );
