@@ -12,7 +12,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'TableCalendar Example',
+      title: 'VidaKids',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         primarySwatch: Colors.blue,
@@ -38,26 +38,62 @@ class _StartPageState extends State<StartPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('TableCalendar Example'),
+        title: Center(
+          child: Text(
+            'VidaKids',
+            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+          ),
+        ),
+        backgroundColor: Colors.lightBlue,
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+      body: Container(
+        color: Colors.lightBlue[50], // Fondo del menú más claro, casi blanco
+        child: ListView(
+          padding: EdgeInsets.all(20.0),
           children: [
-            ElevatedButton(
-              child: Text('Citas'),
-              onPressed: () => Navigator.pushNamed(context, '/citas'),
+            _buildMenuItem(
+              context, 
+              'Citas', 
+              Icons.calendar_today, 
+              '/citas'
             ),
-            ElevatedButton(
-              child: Text('Eventos'),
-              onPressed: () => Navigator.pushNamed(context, '/eventos'),
+            _buildMenuItem(
+              context, 
+              'Eventos', 
+              Icons.event, 
+              '/eventos'
             ),
-            ElevatedButton(
-              child: Text('Citas del Día'),
-              onPressed: () => Navigator.pushNamed(context, '/citas-del-dia'),
+            _buildMenuItem(
+              context, 
+              'Citas del Día', 
+              Icons.today, 
+              '/citas-del-dia'
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildMenuItem(BuildContext context, String title, IconData icon, String route) {
+    return Card(
+      margin: EdgeInsets.symmetric(vertical: 10.0),
+      elevation: 4.0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(15.0),
+      ),
+      child: ListTile(
+        contentPadding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
+        leading: CircleAvatar(
+          backgroundColor: Colors.blue[100],
+          child: Icon(icon, color: Colors.blue),
+        ),
+        title: Text(
+          title,
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+        trailing: Icon(Icons.arrow_forward, color: Colors.blue),
+        onTap: () => Navigator.pushNamed(context, route),
       ),
     );
   }
