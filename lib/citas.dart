@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
+import 'package:intl/intl.dart';
+import 'package:intl/date_symbol_data_local.dart'; // Para manejar la localización
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'menu_footer.dart'; // Importa el footer
@@ -19,7 +21,7 @@ class _CitasPageState extends State<CitasPage> {
   @override
   void initState() {
     super.initState();
-    _fetchCitas();
+    initializeDateFormatting('es_ES', null).then((_) => _fetchCitas()); // Inicializamos la traducción a español
   }
 
   Future<void> _fetchCitas() async {
@@ -66,50 +68,75 @@ class _CitasPageState extends State<CitasPage> {
         centerTitle: true, // Centrar el título
         automaticallyImplyLeading: false, // Oculta la flecha de retroceso
       ),
-      body: Column(
-        children: [
-          TableCalendar(
-            firstDay: DateTime.utc(2010, 10, 16),
-            lastDay: DateTime.utc(2030, 3, 14),
-            focusedDay: _focusedDay,
-            calendarFormat: _calendarFormat,
-            selectedDayPredicate: (day) {
-              return isSameDay(_selectedDay, day);
-            },
-            onDaySelected: (selectedDay, focusedDay) {
-              if (!isSameDay(_selectedDay, selectedDay)) {
-                setState(() {
-                  _selectedDay = selectedDay;
-                  _focusedDay = focusedDay;
-                });
-              }
-            },
-            eventLoader: _getCitasForDay,
-            onFormatChanged: (format) {
-              if (_calendarFormat != format) {
-                setState(() {
-                  _calendarFormat = format;
-                });
-              }
-            },
-            onPageChanged: (focusedDay) {
-              _focusedDay = focusedDay;
-            },
-          ),
-          const SizedBox(height: 8.0),
-          Expanded(
-            child: ListView.builder(
-              itemCount: _getCitasForDay(_selectedDay ?? _focusedDay).length,
-              itemBuilder: (context, index) {
-                var cita = _getCitasForDay(_selectedDay ?? _focusedDay)[index];
-                return ListTile(
-                  title: Text('Cita con: ${cita['profesional_eps']}'),
-                  subtitle: Text('Estado: ${cita['estado_cita']}'),
-                );
+      body: TableCalendar(
+        locale: 'es_ES', // Traducción al español
+        firstDay: DateTime.utc(2010, 10, 16),
+        lastDay: DateTime.utc(2030, 3, 14),
+        focusedDay: _focusedDay,
+        calendarFormat: _calendarFormat,
+        shouldFillViewport: true, // Hace que el calendario ocupe todo el espacio vertical
+        selectedDayPredicate: (day) {
+          return isSameDay(_selectedDay, day);
+        },
+        onDaySelected: (selectedDay, focusedDay) {
+          if (_getCitasForDay(selectedDay).isNotEmpty) {
+            Navigator.pushNamed(
+              context,
+              '/citas_del_dia',
+              arguments: {
+                'fecha': selectedDay,
+                'citas': _getCitasForDay(selectedDay),
               },
-            ),
+            );
+          }
+          setState(() {
+            _selectedDay = selectedDay;
+            _focusedDay = focusedDay;
+          });
+        },
+        eventLoader: _getCitasForDay, // Carga de eventos para mostrar las bolitas
+        onFormatChanged: (format) {
+          if (_calendarFormat != format) {
+            setState(() {
+              _calendarFormat = format;
+            });
+          }
+        },
+        onPageChanged: (focusedDay) {
+          _focusedDay = focusedDay;
+        },
+        calendarStyle: CalendarStyle(
+          todayDecoration: BoxDecoration(
+            color: Colors.lightBlue, // Color para el círculo del día actual
+            shape: BoxShape.circle,
           ),
-        ],
+          selectedDecoration: BoxDecoration(
+            color: Color.fromARGB(255, 140, 212, 245), // Color para el círculo del día seleccionado
+            shape: BoxShape.circle,
+          ),
+          markerDecoration: BoxDecoration(
+            color: Colors.lightBlue, // Color para los marcadores de citas (bolitas)
+            shape: BoxShape.circle,
+          ),
+          markersMaxCount: 3, // Máximo número de marcadores (bolitas)
+          outsideDaysVisible: false,
+        ),
+        daysOfWeekStyle: DaysOfWeekStyle(
+          weekdayStyle: TextStyle(
+            color: Colors.black,
+            fontWeight: FontWeight.bold,
+          ),
+          weekendStyle: TextStyle(
+            color: Colors.black,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        headerStyle: HeaderStyle(
+          titleTextFormatter: (date, locale) {
+            return DateFormat('MMMM yyyy', locale).format(date).toUpperCase();
+          },
+          formatButtonVisible: false,
+        ),
       ),
       bottomNavigationBar: MenuFooter(
         currentIndex: _selectedIndex, // Asigna el índice de la página de Citas

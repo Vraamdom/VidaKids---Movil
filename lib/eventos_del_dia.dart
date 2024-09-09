@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'menu_footer.dart'; // Asegúrate de importar el footer
 
 class EventosDelDiaPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    // Obtenemos los argumentos pasados desde la página anterior
     final Map<String, dynamic> args =
         ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
     final DateTime fecha = args['fecha'];
@@ -19,6 +21,7 @@ class EventosDelDiaPage extends StatelessWidget {
         ),
         backgroundColor: Colors.lightBlue,
         centerTitle: true,
+        iconTheme: IconThemeData(color: Colors.white), // Color blanco para la flecha de devolver
       ),
       body: ListView.builder(
         itemCount: eventos.length,
@@ -42,6 +45,9 @@ class EventosDelDiaPage extends StatelessWidget {
           );
         },
       ),
+      bottomNavigationBar: MenuFooter(
+        currentIndex: 1, // Índice de eventos
+      ),
     );
   }
 
@@ -60,7 +66,7 @@ class EventosDelDiaPage extends StatelessWidget {
               Text('Fecha de Inicio: ${evento['fecha_hora_inicial_evento']}'),
               Text('Fecha de Finalización: ${evento['fecha_hora_final_evento']}'),
               SizedBox(height: 10),
-              Text('Descripción: ${evento['descripcion_evento']}'),
+              Text('Descripción: ${evento['descripcion_evento'] ?? "No hay descripción disponible"}'),
             ],
           ),
           actions: [

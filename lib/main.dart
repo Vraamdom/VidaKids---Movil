@@ -24,7 +24,7 @@ class MyApp extends StatelessWidget {
         '/': (context) => StartPage(),
         '/citas': (context) => CitasPage(),
         '/eventos': (context) => EventosPage(),
-        '/citas-del-dia': (context) => CitasDelDiaPage(),
+        '/citas_del_dia': (context) => CitasDelDiaPage(),
         '/perfil': (context) => PerfilPage(),
         '/eventos_del_dia': (context) => EventosDelDiaPage(),
         '/main': (context) => StartPage(),
