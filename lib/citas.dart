@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'menu_footer.dart'; // Importa el footer
 
 class CitasPage extends StatefulWidget {
   @override
@@ -13,6 +14,7 @@ class _CitasPageState extends State<CitasPage> {
   DateTime _focusedDay = DateTime.now();
   DateTime? _selectedDay;
   Map<DateTime, List<dynamic>> _citas = {};
+  int _selectedIndex = 0; // Índice para la página de Citas
 
   @override
   void initState() {
@@ -53,7 +55,16 @@ class _CitasPageState extends State<CitasPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Citas'),
+        title: Text(
+          'Citas',
+          style: TextStyle(
+            color: Colors.white, // Texto del título en blanco
+            fontWeight: FontWeight.bold, // Texto en negrita
+          ),
+        ),
+        backgroundColor: Colors.lightBlue, // Mismo color de fondo que en eventos
+        centerTitle: true, // Centrar el título
+        automaticallyImplyLeading: false, // Oculta la flecha de retroceso
       ),
       body: Column(
         children: [
@@ -99,6 +110,9 @@ class _CitasPageState extends State<CitasPage> {
             ),
           ),
         ],
+      ),
+      bottomNavigationBar: MenuFooter(
+        currentIndex: _selectedIndex, // Asigna el índice de la página de Citas
       ),
     );
   }

@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:intl/date_symbol_data_local.dart';
+import 'package:vidakids_movil/perfil.dart';
 import 'citas.dart';
 import 'eventos.dart';
 import 'citas_del_dia.dart';
+import 'eventos_del_dia.dart';
 
 void main() {
   initializeDateFormatting().then((_) => runApp(MyApp()));
@@ -23,6 +25,9 @@ class MyApp extends StatelessWidget {
         '/citas': (context) => CitasPage(),
         '/eventos': (context) => EventosPage(),
         '/citas-del-dia': (context) => CitasDelDiaPage(),
+        '/perfil': (context) => PerfilPage(),
+        '/eventos_del_dia': (context) => EventosDelDiaPage(),
+        '/main': (context) => StartPage(),
       },
     );
   }

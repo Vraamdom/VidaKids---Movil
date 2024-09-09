@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'menu_footer.dart'; // Importa el footer
 
 class EventosPage extends StatefulWidget {
   @override
@@ -15,13 +16,12 @@ class _EventosPageState extends State<EventosPage> {
   DateTime _focusedDay = DateTime.now();
   DateTime? _selectedDay;
   Map<DateTime, List<dynamic>> _eventos = {};
-  bool _isLoading = true;
-  String _errorMessage = '';
+  int _selectedIndex = 1; // Índice para la página de Eventos
 
   @override
   void initState() {
     super.initState();
-    initializeDateFormatting('es_ES', null).then((_) => _fetchEventos());
+    initializeDateFormatting('es_ES', null).then((_) => _fetchEventos()); // Inicializamos la traducción a español
   }
 
   Future<void> _fetchEventos() async {
@@ -45,19 +45,12 @@ class _EventosPageState extends State<EventosPage> {
 
         setState(() {
           _eventos = eventosMap;
-          _isLoading = false;
         });
       } else {
-        setState(() {
-          _errorMessage = 'Failed to load eventos';
-          _isLoading = false;
-        });
+        throw Exception('Failed to load eventos');
       }
     } catch (e) {
-      setState(() {
-        _errorMessage = 'Error fetching eventos: $e';
-        _isLoading = false;
-      });
+      print('Error fetching eventos: $e');
     }
   }
 
@@ -66,125 +59,94 @@ class _EventosPageState extends State<EventosPage> {
     return _eventos[dateKey] ?? [];
   }
 
-  void _showEventosDialog(List<dynamic> eventos) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Eventos del día'),
-          content: Container(
-            width: double.maxFinite,
-            child: ListView.builder(
-              shrinkWrap: true,
-              itemCount: eventos.length,
-              itemBuilder: (BuildContext context, int index) {
-                var evento = eventos[index];
-                return ListTile(
-                  title: Text('Evento: ${evento['nombre_evento'] ?? 'Nombre no disponible'}'),
-                  subtitle: Text('Lugar realización: ${evento['lugar_realizacion'] ?? 'Lugar no disponible'}'),
-                );
-              },
-            ),
-          ),
-          actions: [
-            TextButton(
-              child: Text('Cerrar'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-
-String _capitalize(String text) {
-  return text.split(' ').map((word) => word[0].toUpperCase() + word.substring(1)).join(' ');
-}
-
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
-
     return Scaffold(
       appBar: AppBar(
         title: Text(
           'Eventos',
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+          style: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+          ),
         ),
         backgroundColor: Colors.lightBlue,
         centerTitle: true,
-        iconTheme: IconThemeData(color: Colors.white), // Color de la flecha de retroceso
+        automaticallyImplyLeading: false,
       ),
-      body: _isLoading
-          ? Center(child: CircularProgressIndicator())
-          : _errorMessage.isNotEmpty
-              ? Center(child: Text(_errorMessage))
-              : Container(
-                  width: size.width,
-                  height: size.height,
-                  child: TableCalendar(
-                    locale: 'es_ES',
-                    firstDay: DateTime.utc(2010, 10, 16),
-                    lastDay: DateTime.utc(2030, 3, 14),
-                    focusedDay: _focusedDay,
-                    calendarFormat: _calendarFormat,
-                    selectedDayPredicate: (day) {
-                      return isSameDay(_selectedDay, day);
-                    },
-                    onDaySelected: (selectedDay, focusedDay) {
-                      setState(() {
-                        _selectedDay = selectedDay;
-                        _focusedDay = focusedDay;
-                      });
-                      List<dynamic> eventos = _getEventosForDay(selectedDay);
-                      if (eventos.isNotEmpty) {
-                        _showEventosDialog(eventos);
-                      }
-                    },
-                    eventLoader: _getEventosForDay,
-                    onFormatChanged: (format) {
-                      if (_calendarFormat != format) {
-                        setState(() {
-                          _calendarFormat = format;
-                        });
-                      }
-                    },
-                    onPageChanged: (focusedDay) {
-                      _focusedDay = focusedDay;
-                    },
-                    calendarStyle: CalendarStyle(
-                      todayDecoration: BoxDecoration(
-                        color: Colors.lightBlue, // Color del círculo de hoy
-                        shape: BoxShape.circle,
-                      ),
-                      selectedDecoration: BoxDecoration(
-                        color: Color.fromARGB(255, 140, 212, 245), // Color del círculo seleccionado
-                        shape: BoxShape.circle,
-                      ),
-                      markerDecoration: BoxDecoration(
-                        color: Colors.lightBlue, // Color de los círculos de eventos
-                        shape: BoxShape.circle,
-                      ),
-                      markersMaxCount: 3, // Ajusta este valor según sea necesario
-                      outsideDaysVisible: false,
-                    ),
-                  daysOfWeekStyle: DaysOfWeekStyle(
-                    weekdayStyle: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
-                    weekendStyle: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
-                  ),
-                  headerStyle: HeaderStyle(
-                      titleTextFormatter: (date, locale) {
-                        String formattedDate = DateFormat('MMMM yyyy', locale).format(date);
-                        return _capitalize(formattedDate);
-                      },
-                      formatButtonVisible: false
-                    ),
-
-                  ),
-                ),
+      body: TableCalendar(
+        locale: 'es_ES', // Traducción al español
+        firstDay: DateTime.utc(2010, 10, 16),
+        lastDay: DateTime.utc(2030, 3, 14),
+        focusedDay: _focusedDay,
+        calendarFormat: _calendarFormat,
+        shouldFillViewport: true, // Hace que el calendario ocupe todo el espacio vertical
+        selectedDayPredicate: (day) {
+          return isSameDay(_selectedDay, day);
+        },
+        onDaySelected: (selectedDay, focusedDay) {
+          if (_getEventosForDay(selectedDay).isNotEmpty) {
+            Navigator.pushNamed(
+              context,
+              '/eventos_del_dia',
+              arguments: {
+                'fecha': selectedDay,
+                'eventos': _getEventosForDay(selectedDay),
+              },
+            );
+          }
+          setState(() {
+            _selectedDay = selectedDay;
+            _focusedDay = focusedDay;
+          });
+        },
+        eventLoader: _getEventosForDay, // Carga de eventos para mostrar las bolitas
+        onFormatChanged: (format) {
+          if (_calendarFormat != format) {
+            setState(() {
+              _calendarFormat = format;
+            });
+          }
+        },
+        onPageChanged: (focusedDay) {
+          _focusedDay = focusedDay;
+        },
+        calendarStyle: CalendarStyle(
+          todayDecoration: BoxDecoration(
+            color: Colors.lightBlue, // Color para el círculo del día actual
+            shape: BoxShape.circle,
+          ),
+          selectedDecoration: BoxDecoration(
+            color: Color.fromARGB(255, 140, 212, 245), // Color para el círculo del día seleccionado
+            shape: BoxShape.circle,
+          ),
+          markerDecoration: BoxDecoration(
+            color: Colors.lightBlue, // Color para los marcadores de eventos (bolitas)
+            shape: BoxShape.circle,
+          ),
+          markersMaxCount: 3, // Máximo número de marcadores (bolitas)
+          outsideDaysVisible: false,
+        ),
+        daysOfWeekStyle: DaysOfWeekStyle(
+          weekdayStyle: TextStyle(
+            color: Colors.black,
+            fontWeight: FontWeight.bold,
+          ),
+          weekendStyle: TextStyle(
+            color: Colors.black,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        headerStyle: HeaderStyle(
+          titleTextFormatter: (date, locale) {
+            return DateFormat('MMMM yyyy', locale).format(date).toUpperCase();
+          },
+          formatButtonVisible: false,
+        ),
+      ),
+      bottomNavigationBar: MenuFooter(
+        currentIndex: _selectedIndex,
+      ),
     );
   }
 }
