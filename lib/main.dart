@@ -5,6 +5,7 @@ import 'citas.dart';
 import 'eventos.dart';
 import 'citas_del_dia.dart';
 import 'eventos_del_dia.dart';
+import 'login.dart'; // Importa la pantalla de login
 
 void main() {
   initializeDateFormatting().then((_) => runApp(MyApp()));
@@ -19,9 +20,11 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      initialRoute: '/',
+      // Cambia la ruta inicial para que apunte a la pantalla de login
+      initialRoute: '/login', 
       routes: {
         '/': (context) => StartPage(),
+        '/login': (context) => LoginPage(), // Pantalla de login
         '/citas': (context) => CitasPage(),
         '/eventos': (context) => EventosPage(),
         '/citas_del_dia': (context) => CitasDelDiaPage(),
@@ -72,7 +75,7 @@ class _StartPageState extends State<StartPage> {
               context, 
               'Citas del Día', 
               Icons.today, 
-              '/citas-del-dia'
+              '/citas_del_dia'
             ),
           ],
         ),
