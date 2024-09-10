@@ -28,7 +28,7 @@ class _LoginPageState extends State<LoginPage> {
 
       try {
         final response = await http.post(
-          Uri.parse('http://localhost:8000/auth'), // Cambia por tu URL de backend
+          Uri.parse('http://localhost:8000/auth/login'), // Cambia por tu URL de backend
           headers: {'Content-Type': 'application/json'},
           body: jsonEncode({'correo_electronico': correoElectronico, 'contrasena': contrasena}),
         );
@@ -37,7 +37,7 @@ class _LoginPageState extends State<LoginPage> {
           final data = jsonDecode(response.body);
           final token = data['token'];
 
-          // Guardar el token usando shared_preferences
+          // Guardar el token usando SharedPreferences
           SharedPreferences prefs = await SharedPreferences.getInstance();
           await prefs.setString('token', token);
 
@@ -45,7 +45,7 @@ class _LoginPageState extends State<LoginPage> {
           Navigator.pushReplacementNamed(context, '/perfil');
         } else {
           setState(() {
-            errorMessage = 'Error de autenticación. Verifica tus credenciales.';
+            errorMessage = 'Credenciales inválidas. Verifica tu correo y contraseña.';
           });
         }
       } catch (e) {
@@ -95,7 +95,7 @@ class _LoginPageState extends State<LoginPage> {
                       key: _formKey,
                       child: Column(
                         children: [
-                          // Campo de email (correo_electronico)
+                          // Campo de email
                           TextFormField(
                             controller: emailController,
                             keyboardType: TextInputType.emailAddress,
@@ -118,7 +118,7 @@ class _LoginPageState extends State<LoginPage> {
                             },
                           ),
                           SizedBox(height: 16),
-                          // Campo de contraseña (contrasena)
+                          // Campo de contraseña
                           TextFormField(
                             controller: passwordController,
                             obscureText: true,
