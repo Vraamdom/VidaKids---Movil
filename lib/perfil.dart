@@ -47,28 +47,33 @@ class PerfilPage extends StatelessWidget {
                     color: Colors.lightBlue,
                   ),
                   SizedBox(width: 16.0),
-                  // Información básica a la derecha
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Nombre: Juan Pérez',
-                        style: TextStyle(
-                          fontSize: 18.0,
-                          fontWeight: FontWeight.bold,
+                  // Información básica a la derecha dentro de Expanded
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Nombre: Juan Pérez',
+                          style: TextStyle(
+                            fontSize: 18.0,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          overflow: TextOverflow.ellipsis, // Control de desbordamiento de texto
                         ),
-                      ),
-                      SizedBox(height: 8.0),
-                      Text(
-                        'Correo: juan.perez@example.com',
-                        style: TextStyle(fontSize: 16.0),
-                      ),
-                      SizedBox(height: 8.0),
-                      Text(
-                        'Teléfono: +123456789',
-                        style: TextStyle(fontSize: 16.0),
-                      ),
-                    ],
+                        SizedBox(height: 8.0),
+                        Text(
+                          'Correo: juan.perez@example.com',
+                          style: TextStyle(fontSize: 16.0),
+                          overflow: TextOverflow.ellipsis, // Control de desbordamiento de texto
+                        ),
+                        SizedBox(height: 8.0),
+                        Text(
+                          'Teléfono: +123456789',
+                          style: TextStyle(fontSize: 16.0),
+                          overflow: TextOverflow.ellipsis, // Control de desbordamiento de texto
+                        ),
+                      ],
+                    ),
                   ),
                 ],
               ),
@@ -103,6 +108,7 @@ class PerfilPage extends StatelessWidget {
                   Text(
                     'Esta es información adicional que luego será reemplazada por datos de la base de datos.',
                     style: TextStyle(fontSize: 16.0),
+                    overflow: TextOverflow.clip, // Para asegurarse de que el texto no se desborde
                   ),
                 ],
               ),
@@ -125,7 +131,8 @@ class PerfilPage extends StatelessWidget {
                   ),
                 ),
                 style: ElevatedButton.styleFrom(
-                  padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15), backgroundColor: Colors.lightBlue, // Color de fondo del botón
+                  padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+                  backgroundColor: Colors.lightBlue, // Color de fondo del botón
                   textStyle: TextStyle(
                     fontSize: 18.0,
                     fontWeight: FontWeight.bold,
