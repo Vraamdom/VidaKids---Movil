@@ -22,10 +22,10 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       // Cambia la ruta inicial para que apunte a la pantalla de login
-      initialRoute: '/main', 
+      initialRoute: '/login', 
       routes: {
         '/': (context) => StartPage(),
-        // '/login': (context) => LoginPage(), // Pantalla de login
+        '/login': (context) => LoginPage(), // Pantalla de login
         '/citas': (context) => CitasPage(),
         '/eventos': (context) => EventosPage(),
         '/citas_del_dia': (context) => CitasDelDiaPage(),
