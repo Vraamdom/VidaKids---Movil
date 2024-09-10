@@ -27,28 +27,49 @@ class _LoginPageState extends State<LoginPage> {
       final contrasena = passwordController.text;
 
       try {
+        // Realizar la solicitud POST
         final response = await http.post(
           Uri.parse('http://localhost:8000/auth/login'), // Cambia por tu URL de backend
           headers: {'Content-Type': 'application/json'},
-          body: jsonEncode({'correo_electronico': correoElectronico, 'contrasena': contrasena}),
+          body: jsonEncode({
+            'correo_electronico': correoElectronico,
+            'contrasena': contrasena,
+          }),
         );
+
+        print("Código de estado de la respuesta: ${response.statusCode}");
+        print("Cuerpo de la respuesta: ${response.body}");
 
         if (response.statusCode == 200) {
           final data = jsonDecode(response.body);
+
+          // Verificamos que el token y el ID del usuario estén presentes
           final token = data['token'];
+          final idUsuario = data['user']['id'];
 
-          // Guardar el token usando SharedPreferences
-          SharedPreferences prefs = await SharedPreferences.getInstance();
-          await prefs.setString('token', token);
+          print("Token recibido: $token");
+          print("ID de usuario recibido: $idUsuario");
 
-          // Navegar al perfil u otra página después del login exitoso
-          Navigator.pushReplacementNamed(context, '/perfil');
+          // Si todo está bien, almacenamos el token e ID en SharedPreferences
+          if (token != null && idUsuario != null) {
+            SharedPreferences prefs = await SharedPreferences.getInstance();
+            await prefs.setString('token', token);
+            await prefs.setInt('id_usuario', idUsuario);
+
+            // Navegar al perfil después del login exitoso
+            Navigator.pushReplacementNamed(context, '/perfil');
+          } else {
+            setState(() {
+              errorMessage = 'No se pudo obtener el token o ID de usuario. Inténtalo de nuevo.';
+            });
+          }
         } else {
           setState(() {
             errorMessage = 'Credenciales inválidas. Verifica tu correo y contraseña.';
           });
         }
       } catch (e) {
+        print("Error durante la solicitud: $e");
         setState(() {
           errorMessage = 'Error de red. Inténtalo de nuevo más tarde.';
         });
@@ -69,7 +90,7 @@ class _LoginPageState extends State<LoginPage> {
           Container(
             decoration: BoxDecoration(
               image: DecorationImage(
-                image: AssetImage('assets/background.jpg'), // Cambia por la imagen de fondo
+                image: AssetImage('lib/img/login.jpeg'), // Cambia por la imagen de fondo
                 fit: BoxFit.cover,
                 colorFilter: ColorFilter.mode(
                   Colors.black.withOpacity(0.5), BlendMode.darken),
@@ -84,12 +105,12 @@ class _LoginPageState extends State<LoginPage> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    // Logo del aplicativo
+                    // Logo del aplicativo más grande
                     Image.asset(
-                      'assets/logo.png', // Cambia por tu logo
-                      height: 120.0,
+                      'lib/img/logo.png', // Cambia por tu logo
+                      height: 160.0, // Aumentamos el tamaño del logo
                     ),
-                    SizedBox(height: 20),
+                    SizedBox(height: 30),
                     // Formulario de login
                     Form(
                       key: _formKey,
@@ -99,11 +120,18 @@ class _LoginPageState extends State<LoginPage> {
                           TextFormField(
                             controller: emailController,
                             keyboardType: TextInputType.emailAddress,
+                            style: TextStyle(color: Colors.black), // Letra negra en el campo de texto
                             decoration: InputDecoration(
                               labelText: 'Correo electrónico',
+                              labelStyle: TextStyle(color: Colors.black), // Cambiamos la letra de la etiqueta a negro
                               filled: true,
                               fillColor: Colors.white.withOpacity(0.8),
-                              border: OutlineInputBorder(
+                              enabledBorder: OutlineInputBorder(
+                                borderSide: BorderSide(color: Colors.black), // Cambiamos el borde a negro
+                                borderRadius: BorderRadius.circular(8.0),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderSide: BorderSide(color: Colors.black), // Cambiamos el borde a negro cuando se enfoca
                                 borderRadius: BorderRadius.circular(8.0),
                               ),
                             ),
@@ -122,11 +150,18 @@ class _LoginPageState extends State<LoginPage> {
                           TextFormField(
                             controller: passwordController,
                             obscureText: true,
+                            style: TextStyle(color: Colors.black), // Letra negra en el campo de texto
                             decoration: InputDecoration(
                               labelText: 'Contraseña',
+                              labelStyle: TextStyle(color: Colors.black), // Cambiamos la letra de la etiqueta a negro
                               filled: true,
                               fillColor: Colors.white.withOpacity(0.8),
-                              border: OutlineInputBorder(
+                              enabledBorder: OutlineInputBorder(
+                                borderSide: BorderSide(color: Colors.black), // Cambiamos el borde a negro
+                                borderRadius: BorderRadius.circular(8.0),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderSide: BorderSide(color: Colors.black), // Cambiamos el borde a negro cuando se enfoca
                                 borderRadius: BorderRadius.circular(8.0),
                               ),
                             ),
@@ -145,23 +180,30 @@ class _LoginPageState extends State<LoginPage> {
                                   onPressed: _login,
                                   style: ElevatedButton.styleFrom(
                                     padding: EdgeInsets.symmetric(
-                                        horizontal: 80, vertical: 15), backgroundColor: Colors.lightBlue,
+                                        horizontal: 80, vertical: 15),
+                                    backgroundColor: Colors.lightBlue,
                                     textStyle: TextStyle(
                                       fontSize: 18.0,
                                       fontWeight: FontWeight.bold,
+                                      color: Colors.white, // Letra blanca en el botón
                                     ),
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(10),
                                     ),
                                   ),
-                                  child: Text('Iniciar sesión'),
+                                  child: Text(
+                                    'Iniciar sesión',
+                                    style: TextStyle(
+                                      color: Colors.white, // Letra blanca
+                                    ),
+                                  ),
                                 ),
                           SizedBox(height: 10),
                           // Mostrar mensajes de error si hay
                           if (errorMessage != null)
                             Text(
                               errorMessage!,
-                              style: TextStyle(color: Colors.red),
+                              style: TextStyle(color: Colors.black),
                             ),
                         ],
                       ),
