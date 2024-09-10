@@ -5,6 +5,7 @@ import 'citas.dart';
 import 'eventos.dart';
 import 'citas_del_dia.dart';
 import 'eventos_del_dia.dart';
+import 'menu_footer.dart'; // Importa el footer
 
 void main() {
   initializeDateFormatting().then((_) => runApp(MyApp()));
@@ -52,35 +53,19 @@ class _StartPageState extends State<StartPage> {
         backgroundColor: Colors.lightBlue,
       ),
       body: Container(
-        color: Colors.lightBlue[50], // Fondo del menú más claro, casi blanco
-        child: ListView(
-          padding: EdgeInsets.all(20.0),
-          children: [
-            _buildMenuItem(
-              context, 
-              'Citas', 
-              Icons.calendar_today, 
-              '/citas'
+        color: const Color.fromARGB(255, 255, 255, 255), // Fondo del menú más claro, casi blanco
+        child: Center(
+          child: Image.asset('lib/img/vidakids.png', // Ruta de la imagen
+            fit: BoxFit.contain, 
             ),
-            _buildMenuItem(
-              context, 
-              'Eventos', 
-              Icons.event, 
-              '/eventos'
-            ),
-            _buildMenuItem(
-              context, 
-              'Citas del Día', 
-              Icons.today, 
-              '/citas-del-dia'
-            ),
-          ],
         ),
       ),
+      bottomNavigationBar: MenuFooter(currentIndex: 1),
     );
   }
 
-  Widget _buildMenuItem(BuildContext context, String title, IconData icon, String route) {
+  Widget _buildMenuItem(
+      BuildContext context, String title, IconData icon, String route) {
     return Card(
       margin: EdgeInsets.symmetric(vertical: 10.0),
       elevation: 4.0,
