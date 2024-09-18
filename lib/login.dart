@@ -29,7 +29,7 @@ class _LoginPageState extends State<LoginPage> {
       try {
         // Realizar la solicitud POST
         final response = await http.post(
-          Uri.parse('http://localhost:8000/auth/login'), // Cambia por tu URL de backend
+          Uri.parse('https://vidakids-api-hx41.onrender.com/auth/login'), // Cambia por tu URL de backend
           headers: {'Content-Type': 'application/json'},
           body: jsonEncode({
             'correo_electronico': correoElectronico,

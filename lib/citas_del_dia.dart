@@ -98,7 +98,7 @@ class CitasDelDiaPage extends StatelessWidget {
     // Hacemos una solicitud HTTP para obtener los detalles de la orden si id_orden no es nulo
     if (idOrden != null) {
       final response =
-          await http.get(Uri.parse('http://localhost:8000/orden/$idOrden'));
+          await http.get(Uri.parse('https://vidakids-api-hx41.onrender.com/orden/$idOrden'));
 
       if (response.statusCode == 200) {
         orden = json.decode(response.body);

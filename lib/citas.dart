@@ -25,7 +25,7 @@ class _CitasPageState extends State<CitasPage> {
   }
 
   Future<void> _fetchCitas() async {
-    final response = await http.get(Uri.parse('http://localhost:8000/citas'));
+    final response = await http.get(Uri.parse('https://vidakids-api-hx41.onrender.com/citas'));
 
     if (response.statusCode == 200) {
       List citas = json.decode(response.body);

@@ -44,7 +44,7 @@ class _PerfilPageState extends State<PerfilPage> {
 
       // Hacemos la solicitud GET al servidor con el token y el ID del usuario
       final response = await http.get(
-        Uri.parse('http://localhost:8000/usuarios/perfil/$idUsuario'), // Cambia por tu URL
+        Uri.parse('https://vidakids-api-hx41.onrender.com/usuarios/perfil/$idUsuario'), // Cambia por tu URL
         headers: {
           'Authorization': 'Bearer $token',
           'Content-Type': 'application/json',

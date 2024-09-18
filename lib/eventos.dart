@@ -26,7 +26,7 @@ class _EventosPageState extends State<EventosPage> {
 
   Future<void> _fetchEventos() async {
     try {
-      final response = await http.get(Uri.parse('http://localhost:8000/eventos'));
+      final response = await http.get(Uri.parse('https://vidakids-api-hx41.onrender.com/eventos'));
 
       if (response.statusCode == 200) {
         List eventos = json.decode(response.body);
