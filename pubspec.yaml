@@ -42,6 +42,13 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  flutter_launcher_icons:
+
+flutter_icons:
+  andorid: 'launcher_icon'
+  ios: true
+  image_path: 'assets/icon/logo.png'
+  adaptive_icon_background: 'assets/icon/logo.png'
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
@@ -62,10 +69,10 @@ flutter:
     - lib/img/sidebar-bg-dark.jpg
     - lib/img/fondo-login.png
     - lib/img/login.jpeg
+    - assets/
   # To add assets to your application, add an assets section, like this:
-  # assets:
-  #   - images/a_dot_burr.jpeg
-  #   - images/a_dot_ham.jpeg
+
+    
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
